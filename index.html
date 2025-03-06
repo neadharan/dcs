@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheets Data Fetch</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {
+            packages: ['corechart', 'table']
+        });
+
+        google.charts.setOnLoadCallback(drawTable);
+
+         
+        function searchData() {
+            var scno = document.getElementById('scno').value; 
+            var id = document.getElementById('id').value; 
+            var newScnoBox = document.getElementById('new_scno'); 
+            var msgBox = document.getElementById('msg'); 
+
+            if (scno && id) {
+                var queryString = encodeURIComponent('SELECT A, B, C');
+                var query = new google.visualization.Query(
+                    'https://docs.google.com/spreadsheets/d/12oPt6RDEPpIVzBBR-kwf6CadWFgSqjAlGHm2eav4MSw/gviz/tq?sheet=Sheet1&headers=1&tq=' + queryString); 
+
+                query.send(function(response) {
+                    if (response.isError()) {
+                        alert('Error: ' + response.getMessage());
+                        return;
+                    }
+                    var data = response.getDataTable();
+                    var rowCount = data.getNumberOfRows();
+                    var found = false;
+
+                   
+                    for (var i = 0; i < rowCount; i++) {
+                        var sheetScno = data.getValue(i, 0);
+                        var sheetId = data.getValue(i, 1);
+
+                        if (scno == sheetScno && id == sheetId) {
+                            var newScno = data.getValue(i, 2);
+                            newScnoBox.value = newScno;
+                            msgBox.style.color = "green";
+                            msgBox.innerHTML = "तपाइले नयाँ ग्राहक नम्बर (SCNO) प्राप्त गर्नुभयको छ!";
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        newScnoBox.value = "";
+                        msgBox.style.color = "red";
+                        msgBox.innerHTML = "तपाईंको पुरानाे SCNO र ID गलत लगाउनु भएकाेले पुन रुजु गिर लगााउनु हाेला !";
+                    }
+                });
+            } else {
+                msgBox.style.color = "red";
+                msgBox.innerHTML = "SCNO र ID दुबै भर्नुहोस्!";
+                newScnoBox.value = "";
+                                
+            }
+            
+
+            
+
+        }
+     
+    </script>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 90;
+            padding: 50px;
+            background-color: #444fec;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+            color: #3a11f1;
+            font-size: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2a0cb3;
+            font-size: 25px;
+        }
+
+        h3 {
+            text-align: center;
+            color: #df2e2e;
+            font-size: 18px;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+            display:block;
+            margin: 0 auto;
+            background-color: #3944da;
+            
+            
+        }
+
+      
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #b60d0d;
+            border-radius: 5px;
+        }
+
+
+     
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #beebf3;
+            padding: 11%;
+            box-shadow: 0 0 10px rgba(233, 127, 127, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #077a16;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 95%;
+            padding: 10px;
+            background-color: #0c22e7;
+            color: rgb(240, 244, 245);
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #10ce19;
+        }
+
+        .message {
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        #new_scno {
+            margin-top: 10px;
+            font-size: 15px;
+            padding: 10px;
+            width: 90%;
+            border: 1px solid #1fb312;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="nea.png" alt="Logo" class="logo"> 
+        <h1>नेपाल बिधुत प्राधिकारण</h1>
+        <h2>धरान वितरण केन्द्र </h2>
+        <h3>परिवर्तन भयको ग्राहक नम्बर थाहापाउनुहोस</h3>
+
+        <div class="form-group">
+            <label for="scno">पुरानाे ग्राहक नम्बर SCNO</label>
+            <input type="text" id="scno" placeholder="पुरानाे ग्राहक नम्बर यहाँ राख्नुहोस (003.12.051)">
+        </div>
+
+        <div class="form-group">
+            <label for="id">ग्राहक Consumer ID</label>
+            <input type="text" id="id" placeholder="ग्राहक आईडी यहाँ राख्नुहोस(१२३४५)">
+        </div>
+
+        <button onclick="searchData()">खोजी गर्नुहोस्</button>
+
+        <div class="message" id="msg"></div>
+
+        <div class="form-group">
+            <label for="new_scno">नयाँ ग्राहक नम्बर SCNO</label>
+            <input type="text" id="new_scno" readonly placeholder="नयाँ SCNO यहाँ देखाइने छ">
+        </div>
+    </div>
+</body>
+</html>
